@@ -3,12 +3,6 @@
 import tkinter as tk
 top = tk.Tk()
 top.geometry("500x200")
-# Code to add widgets will go here...
-# def helloCallBack():
-#    tkMessageBox.showinfo( "Hello Python", "Hello World")
-
-
-# B = tkinter.Button(top, text ="Hello", command = helloCallBack)
 
 greeting = tk.Label(text="Welcome to KUBER!!!", 
                     width=25,
@@ -16,13 +10,19 @@ greeting = tk.Label(text="Welcome to KUBER!!!",
 greeting.pack()
 
 
-def handle_click(event):
-    print("The button was clicked!")
+def handle_click():
+    window = tk.Tk()
+    top.destroy()
+    window.geometry('550x450')
+    window.title('Kuber')
+    rlbl = tk.Label(window, text='\n[!] Invalid Login')
+    rlbl.pack()
 
 button = tk.Button(
     text="Lets start!",
     width=7,
     height=1,
+    command = handle_click
 )
 
 button.pack()
