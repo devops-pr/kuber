@@ -1,7 +1,11 @@
-# from django.core.validators import URLValidator
-# from django.core.exceptions import ValidationError
+# https://github.com/devops-pr/walmart_hackathon.git
 import re
 import requests
+import git
+import os
+import shutil
+import docker
+
 
 
 def validate_url(url):
@@ -20,13 +24,31 @@ def verify_url_accessibility(url):
 
 
 def clone_repo():
-    git_repo = input("Please provide the scm repo: ")
+    # git_repo = input("Please provide the scm repo: ")
+    git_repo = "https://github.com/devops-pr/walmart_hackathon.git"
     if not validate_url(git_repo):
         print("The URL is not right. Please enter the url in 'https://<domain>/repos/<repo>' format")
     elif verify_url_accessibility(git_repo) != 200:
         print("The provided repo is not accessible.")
+        exit()
+    try:
+        shutil.rmtree('/tmp/kuber_tmp/', ignore_errors=True)
+        os.mkdir("/tmp/kuber_tmp/")
+        git.Git("/tmp/kuber_tmp/").clone(git_repo)
+    except Exception as e:
+        print("Unable to clone")
+        print(e)
+    # finally:
+    #     print("Deleted.")
+
+
 
 
 clone_repo()
+try:
+    docker_client = docker.from_env()
+    docker_client.containers.run("ubuntu:latest", "echo hello world")
+except Exception as e:
+    print(e)
 
 
