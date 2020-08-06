@@ -38,6 +38,14 @@ def verify_url_accessibility(url):
     return url_get_call.status_code
 
 
+def tmp_dir_function(git_repo):
+    shutil.rmtree(tmp_dir, ignore_errors=True)
+    print("Creating fresh tmp directory...")
+    os.mkdir(tmp_dir)
+    print("Cloning the project...")
+    git.Git(tmp_dir).clone(git_repo)
+
+
 def clone_repo():
     # git_repo = input("Please provide the scm repo: ")
     git_repo = "https://github.com/devops-pr/walmart_hackathon.git"
@@ -48,25 +56,21 @@ def clone_repo():
         exit()
     try:
         print("Cleaning tmp directory...")
-        shutil.rmtree(tmp_dir, ignore_errors=True)
-        print("Creating fresh tmp directory...")
-        os.mkdir(tmp_dir)
-        print("Cloning the project...")
-        git.Git(tmp_dir).clone(git_repo)
+        # tmp_dir_function(git_repo)
         os.chdir(tmp_dir + os.listdir(tmp_dir)[0] + "/")
         repo = git.Repo()
         sha = repo.head.object.hexsha
-        return tmp_dir + os.listdir(tmp_dir)[0] + "/", sha
+        return tmp_dir + os.listdir(tmp_dir)[0] + "/", sha, os.listdir(tmp_dir)[0]
     except Exception as clone_exception:
         print("Unable to clone")
         print(clone_exception)
 
 
+
 def build_image(project_path, tag):
     try:
         print("Building image...")
-        # tag = "devopspr/my_app:" + latest_commit_hash
-        docker_client.images.build(path=project_path, tag=tag, labels={"name": "myapp"})
+        docker_client.images.build(path=project_path, tag=tag)
         print("Tagging image with latest...")
         docker.client.from_env().images.get(tag).tag(repo, 'latest')
         # print(docker_client.containers.run("devopspr/my_app:latest", ports = {'5000/tcp': ('127.0.0.1', 8080)},
@@ -77,13 +81,14 @@ def build_image(project_path, tag):
 
 def push_image(image, latest_commit_hash):
     attempts = 0
-    image_url = "https://hub.docker.com/v1/repositories/" + repo + "tags/" + latest_commit_hash
+    image_url = "https://hub.docker.com/v1/repositories/" + repo + "/tags/" + latest_commit_hash
+    print(image_url)
     while attempts < 3:
         try:
             p = getpass.getpass(prompt='Provide your dockerhub password: ')
             if context.verify(p, hashed_password):
                 docker_client.login(username='devopspr', password=p)
-                if verify_url_accessibility(image_url) != 200:
+                if verify_url_accessibility(image_url) == 200:
                     print("Image already exist in registry, skipping push...")
                     break
                 else:
@@ -101,12 +106,10 @@ def push_image(image, latest_commit_hash):
         except Exception as e:
             print(e)
 
-
-# build_image()
-# push_image()
-project_path, latest_commit_hash = clone_repo()
-repo = "devopspr/my_app"
-tag = repo + ":" + latest_commit_hash
-build_image(project_path, tag)
-push_image(repo, latest_commit_hash)
-# print(verify_url_accessibility("https://hub.docker.com/v1/repositories/devopspr/my_app/tags/latest"))
+if __name__ == '__main__':
+    project_path, latest_commit_hash, app_name = clone_repo()
+    repo = "devopspr/" + app_name
+    tag = repo + ":" + latest_commit_hash
+    build_image(project_path, tag)
+    push_image(repo, latest_commit_hash)
+    # print(verify_url_accessibility("https://hub.docker.com/v1/repositories/devopspr/my_app/tags/59ccfe9d82a8150b9a78a3c893d0946ed3ad3f03"))
