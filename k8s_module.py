@@ -36,13 +36,3 @@ def context_selection():
             else:
                 print("Wrong input provided for 3 attempts. Exiting...")
                 exit(0)
-
-
-
-
-app_context = context_selection()
-
-client = client.CoreV1Api(api_client=config.new_client_from_config(context=app_context))
-print("\nList of pods on %s:" % app_context)
-for i in client.list_pod_for_all_namespaces().items:
-    print("%s\t%s\t%s" %(i.status.pod_ip, i.metadata.namespace, i.metadata.name))

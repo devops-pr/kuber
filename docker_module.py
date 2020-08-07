@@ -39,6 +39,7 @@ def verify_url_accessibility(url):
 
 
 def tmp_dir_function(git_repo):
+    print("Cleaning tmp directory...")
     shutil.rmtree(tmp_dir, ignore_errors=True)
     print("Creating fresh tmp directory...")
     os.mkdir(tmp_dir)
@@ -55,7 +56,6 @@ def clone_repo():
         print("The provided repo is not accessible.")
         exit()
     try:
-        print("Cleaning tmp directory...")
         # tmp_dir_function(git_repo)
         os.chdir(tmp_dir + os.listdir(tmp_dir)[0] + "/")
         repo = git.Repo()
