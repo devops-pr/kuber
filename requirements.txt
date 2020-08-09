@@ -4,3 +4,4 @@ docker
 tqdm
 passlib
 kubernetes
+helm-charts
