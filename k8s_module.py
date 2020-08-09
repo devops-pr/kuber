@@ -36,3 +36,9 @@ def context_selection():
             else:
                 print("Wrong input provided for 3 attempts. Exiting...")
                 exit(0)
+
+def get_available_ns(client):
+    global available_ns
+    available_ns = []
+    for ns in app_client.list_namespace().items:
+        available_ns.append(ns.metadata.name)
