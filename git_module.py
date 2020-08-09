@@ -7,11 +7,13 @@ from common import *
 tmp_dir = "/tmp/kuber_tmp/"
 
 
-def workdir():
+def workdir(git_repo):
     print("Cleaning working directory...")
     shutil.rmtree(tmp_dir, ignore_errors=True)
-    print("Creating working directory...")
+    print("Creating fresh working directory...")
     os.mkdir(tmp_dir)
+    print("Cloning the project...")
+    git.Git(tmp_dir).clone(git_repo)
 
 
 def clone_repo():
@@ -23,10 +25,8 @@ def clone_repo():
     elif not verify_url_accessibility(git_repo):
         exit()
     try:
-        workdir()
+        workdir(git_repo)
         os.chdir(tmp_dir + os.listdir(tmp_dir)[0] + "/")
-        print("Cloning the project...")
-        git.Git(tmp_dir).clone(git_repo)
         repo = git.Repo()
         sha = repo.head.object.hexsha
         return tmp_dir + os.listdir(tmp_dir)[0] + "/", sha, os.listdir(tmp_dir)[0]

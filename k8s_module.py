@@ -40,5 +40,6 @@ def context_selection():
 def get_available_ns(client):
     global available_ns
     available_ns = []
-    for ns in app_client.list_namespace().items:
+    for ns in client.list_namespace().items:
         available_ns.append(ns.metadata.name)
+    return available_ns

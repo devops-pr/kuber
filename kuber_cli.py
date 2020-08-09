@@ -35,5 +35,5 @@ else:
         print(e)
 
 chart_git_repo = "https://github.com/devops-pr/kuber-charts.git"
-chart_path = clone_chart()
+chart_path = clone_chart(chart_git_repo)
 install_app(app_name, 5000, chart_path)
