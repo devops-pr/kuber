@@ -6,9 +6,10 @@ project_path, latest_commit_hash, app_name = clone_repo()
 app_name = app_name.replace("_", "-")
 image_name = "devopspr/" + app_name
 tag = image_name + ":" + latest_commit_hash
-image_available = check_image_availability_on_repo(image_name, latest_commit_hash)
-build_image(project_path, tag, image_available, image_name)
-push_image(image_name, image_available)
+image_available_remote = check_image_availability_on_repo(image_name, latest_commit_hash)
+image_available_local = check_image_availability_on_local(tag)
+build_image(project_path, tag, image_available_local, image_name)
+push_image(image_name, image_available_remote)
 app_context = context_selection()
 app_client = client.CoreV1Api(api_client=config.new_client_from_config(context=app_context))
 # app_client.list_namespace()

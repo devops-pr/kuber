@@ -19,35 +19,36 @@ docker_client = docker.from_env()
 def check_image_availability_on_repo(repo, latest_commit_hash):
     image_url = "https://hub.docker.com/v1/repositories/" + repo + "/tags/" + latest_commit_hash
     if verify_url_accessibility(image_url):
-        print("Image already exist in registry.")
         return True
     else:
         return False
 
-
-def build_image(project_path, tag, image_available, image_name):
+def check_image_availability_on_local(tag):
     try:
-        if image_available:
-            print("skipping build...")
-        else:
+        docker_client.images.get(tag)
+    except docker.errors.ImageNotFound:
+        return False
+
+
+def build_image(project_path, tag, image_available_local, image_name):
+    try:
+        if image_available_local:
             print("Building image...")
             docker_client.images.build(path=project_path, tag=tag)
             print("Tagging image with latest...")
             docker.client.from_env().images.get(tag).tag(image_name, 'latest')
-
-
-        # print(docker_client.containers.run("devopspr/my_app:latest", ports = {'5000/tcp': ('127.0.0.1', 8080)},
-        # detach= True))
+        else:
+            print("Image already exist locally. skipping build...")
     except Exception as e:
         print(e)
 
 
-def push_image(image, image_available):
+def push_image(image, image_available_repo):
     attempts = 0
     while attempts < 3:
         try:
-            if image_available:
-                print("skipping push...")
+            if image_available_repo:
+                print("Image already exist in registry. skipping push...")
                 break
             else:
                 p = getpass.getpass(prompt='Provide your dockerhub password: ')
