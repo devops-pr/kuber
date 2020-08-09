@@ -4,28 +4,28 @@ import git
 from common import *
 
 
-tmp_dir = "/tmp/kuber_tmp/"
-
-
-def workdir(git_repo):
+def create_workdir(git_repo, work_dir):
     print("Cleaning working directory...")
-    shutil.rmtree(tmp_dir, ignore_errors=True)
+    delete_workdir(work_dir)
     print("Creating fresh working directory...")
-    os.mkdir(tmp_dir)
+    os.mkdir(work_dir)
     print("Cloning the project...")
-    git.Git(tmp_dir).clone(git_repo)
+    git.Git(work_dir).clone(git_repo)
 
 
-def clone_repo():
+def delete_workdir(work_dir):
+    shutil.rmtree(work_dir, ignore_errors=True)
+
+
+def clone_repo(git_repo, tmp_dir):
     # git_repo = input("Please provide the scm repo: ")
-    git_repo = "https://github.com/devops-pr/walmart_hackathon.git"
     if not validate_url(git_repo):
         print("The URL is not right. Please enter the url in 'https://<domain>/repos/<repo>' format")
         exit()
     elif not verify_url_accessibility(git_repo):
         exit()
     try:
-        workdir(git_repo)
+        # create_workdir(git_repo, tmp_dir)
         os.chdir(tmp_dir + os.listdir(tmp_dir)[0] + "/")
         repo = git.Repo()
         sha = repo.head.object.hexsha
@@ -35,7 +35,7 @@ def clone_repo():
         print(clone_exception)
 
 
-def clone_chart(chart_repo):
+def clone_chart(chart_repo, tmp_dir):
     # git_repo = input("Please provide the scm repo: ")
     if not validate_url(chart_repo):
         print("The URL is not right. Please enter the url in 'https://<domain>/repos/<repo>' format")

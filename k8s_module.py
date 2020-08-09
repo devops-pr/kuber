@@ -43,3 +43,5 @@ def get_available_ns(client):
     for ns in client.list_namespace().items:
         available_ns.append(ns.metadata.name)
     return available_ns
+
+
