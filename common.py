@@ -17,5 +17,5 @@ def verify_url_accessibility(url):
     if url_get_call.status_code == 200:
         return True
     else:
-        print("The provided repo is not accessible.")
+        # print("The provided repo is not accessible.")
         return False

@@ -8,9 +8,9 @@ tmp_dir = "/tmp/kuber_tmp/"
 
 
 def workdir(git_repo):
-    print("Cleaning tmp directory...")
+    print("Cleaning working directory...")
     shutil.rmtree(tmp_dir, ignore_errors=True)
-    print("Creating fresh tmp directory...")
+    print("Creating fresh working directory...")
     os.mkdir(tmp_dir)
     print("Cloning the project...")
     git.Git(tmp_dir).clone(git_repo)

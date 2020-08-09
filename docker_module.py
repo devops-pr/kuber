@@ -25,7 +25,7 @@ def check_image_availability_on_repo(repo, latest_commit_hash):
         return False
 
 
-def build_image(project_path, tag):
+def build_image(project_path, tag, image_available, image_name):
     try:
         if image_available:
             print("skipping build...")
@@ -42,7 +42,7 @@ def build_image(project_path, tag):
         print(e)
 
 
-def push_image(image):
+def push_image(image, image_available):
     attempts = 0
     while attempts < 3:
         try:
@@ -50,10 +50,10 @@ def push_image(image):
                 print("skipping push...")
                 break
             else:
-                print("Pushing the image to registry...")
                 p = getpass.getpass(prompt='Provide your dockerhub password: ')
                 if context.verify(p, hashed_password):
                     docker_client.login(username='devopspr', password=p)
+                    print("Pushing the image to registry...")
                     docker_client.images.push(image)
                     break
                 else:
