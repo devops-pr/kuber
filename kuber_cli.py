@@ -1,6 +1,7 @@
 from docker_module import *
 from k8s_module import *
 from git_module import *
+from kubernetes import client
 
 project_path, latest_commit_hash, app_name = clone_repo()
 app_name = app_name.replace("_", "-")

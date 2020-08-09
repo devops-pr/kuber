@@ -1,8 +1,8 @@
-from kubernetes import client, config
+from kubernetes import config
 # Configs can be set in Configuration class directly or using helper utility
 
+
 def context_selection():
-    global contexts, context
     contexts, active_context = config.list_kube_config_contexts()
     if not contexts:
         print("Cannot find any context in kube-config file.")
@@ -11,7 +11,7 @@ def context_selection():
     print("Available contexts: {}".format(contexts))
     print("Current active context: {}".format(active_context['name']))
     attempt = 0
-    while attempt<3:
+    while attempt < 3:
         change_context = input("Change Context?[Y/N]: ").lower()
         if change_context == "y":
             active_context_name = input("Enter the context you want to use: ").lower()
@@ -29,7 +29,7 @@ def context_selection():
         elif change_context == "n":
             return active_context['name']
         else:
-            if attempt <2:
+            if attempt < 2:
                 print("Wrong input!!! Reply with [Y/N]")
                 attempt += 1
                 continue

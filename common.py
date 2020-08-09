@@ -1,6 +1,7 @@
 import re
 import requests
 
+
 def validate_url(url):
     regex = re.compile(
                 r'^(?:http|ftp)s?://'  # http:// or https://
