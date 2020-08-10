@@ -36,6 +36,7 @@ v1namespaceclient = client.V1Namespace()
 v1namespaceclient.metadata = client.V1ObjectMeta(name=app_name)
 chart_git_repo = "https://github.com/devops-pr/kuber-charts.git"
 chart_path = clone_chart(chart_git_repo, working_dir)
+port = 5000
 
 
 def endpoint_display():
@@ -46,11 +47,11 @@ def endpoint_display():
 
 if app_name in available_ns:
     deploy = input("The app is already onboarded. "
-                   "What you wish to do?[C[Cleanup app] / D[Deploy] / E[Display endpoint and exit]]: ").lower()
+                   "\nWhat you wish to do?[C[Cleanup app] / D[Deploy] / E[Display endpoint and exit]]: ").lower()
     # TODO: attemps for y/n
     if deploy == "d":
         print("Deploying latest application version...")   # deploy(app_name)
-        updrade_app(app_name, chart_path)
+        updrade_app(app_name, port, chart_path)
         endpoint_display()
     elif deploy == "e":
         endpoint_display()
@@ -65,7 +66,7 @@ else:
     try:
         print("Creating namesapace...")
         corev1apiclient.create_namespace(v1namespaceclient)
-        install_app(app_name, 5000, chart_path)
+        install_app(app_name, port, chart_path)
         endpoint_display()
     except Exception as e:
         print(e)
