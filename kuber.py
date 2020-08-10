@@ -15,7 +15,7 @@ def handle_click():
     top.destroy()
     window.geometry('550x450')
     window.title('Kuber')
-    rlbl = tk.Label(window, text='\n[!] Invalid Login')
+    rlbl = tk.Label(window, text='\nWork in progress...')
     rlbl.pack()
 
 button = tk.Button(

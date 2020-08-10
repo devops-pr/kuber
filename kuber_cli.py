@@ -1,7 +1,7 @@
 from docker_module import *
 from k8s_module import *
 from git_module import *
-from kubernetes import client
+from kubernetes import client, config
 from helm_module import *
 
 print("""
@@ -40,9 +40,23 @@ port = 5000
 
 
 def endpoint_display():
-    PORT = corev1apiclient.list_namespaced_service(app_name).items[0].spec.ports[0].node_port
+    APP_PORT = corev1apiclient.list_namespaced_service(app_name,
+                                                       label_selector="app.kubernetes.io/name="+app_name
+                                                       ).items[0].spec.ports[0].node_port
+    GRAFANA_PORT = corev1apiclient.list_namespaced_service("monitoring",
+                                                           label_selector="app.kubernetes.io/name=grafana"
+                                                           ).items[0].spec.ports[0].node_port
+    PROMETHEUS_PORT = corev1apiclient.list_namespaced_service("monitoring",
+                                                              label_selector="app=prometheus-operator-prometheus"
+                                                           ).items[0].spec.ports[0].node_port
+    KUBERNETES_DASHBOARD_PORT = corev1apiclient.list_namespaced_service("kubernetes-dashboard",
+                                                                        label_selector="k8s-app=kubernetes-dashboard"
+                                                                        ).items[0].spec.ports[0].node_port
     NODE = corev1apiclient.list_node().items[0].status.addresses[0].address
-    print("\n\n\tAccess your app at: http://{}:{}\n\n".format(NODE, PORT))
+    print("\n\n\tAccess your app at: http://{0}:{1}\n\n\tMonitor your app at:\n\n"
+          "\t\tGRAFANA: http://{0}:{2}\n"
+          "\t\tKUBERNETES DASHBOARD: http://{0}:{3}\n"
+          "\n\n".format(NODE, APP_PORT, GRAFANA_PORT, KUBERNETES_DASHBOARD_PORT))
 
 
 if app_name in available_ns:

@@ -2,11 +2,14 @@ import subprocess
 
 
 def install_app(app, port, chart_path):
-    install_command = ["helm", "install", app, "--namespace="+app,  "--set", "image.repository=devopspr/"+app,
-                                                                    "--set", "image.tag=latest",
-                                                                    "--set", "container.port="+str(port),
-                                                                    "--set", "service.port="+str(port),
-                                                                    "--set", "service.type=NodePort", chart_path+"/",
+    install_command = ["helm", "install", app, "--namespace="+app,
+                       "--set", "image.repository=devopspr/"+app,
+                       "--set", "image.tag=latest",
+                       "--set", "container.port="+str(port),
+                       "--set", "service.port="+str(port),
+                       "--set", "service.type=NodePort", chart_path+"/",
+                       "--set", "fullnameOverride="+app + "-kuber",
+                       "--set", "nameOverride="+app,
                        "--wait"]
     # print(install_command)
     try:
@@ -16,10 +19,13 @@ def install_app(app, port, chart_path):
 
 
 def updrade_app(app, port, chart_path):
-    install_command = ["helm", "upgrade", app, "--namespace="+app,  "--set", "image.repository=devopspr/"+app,
-                                                                    "--set", "image.tag=latest",
-                                                                    "--set", "container.port=" + str(port),
-                                                                    "--set", "service.port=" + str(port),
+    install_command = ["helm", "upgrade", app, "--namespace="+app,
+                       "--set", "image.repository=devopspr/"+app,
+                       "--set", "image.tag=latest",
+                       "--set", "container.port=" + str(port),
+                       "--set", "service.port=" + str(port),
+                       "--set", "fullnameOverride=" + app + "-kuber",
+                       "--set", "nameOverride=" + app,
                        "--set", "service.type=NodePort",
                        chart_path+"/", "--wait"]
     try:
