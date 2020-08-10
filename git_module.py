@@ -18,14 +18,12 @@ def delete_workdir(work_dir):
 
 
 def clone_repo(git_repo, tmp_dir):
-    # git_repo = input("Please provide the scm repo: ")
     if not validate_url(git_repo):
         print("The URL is not right. Please enter the url in 'https://<domain>/repos/<repo>' format")
         exit()
     elif not verify_url_accessibility(git_repo):
         exit()
     try:
-        # create_workdir(git_repo, tmp_dir)
         os.chdir(tmp_dir + os.listdir(tmp_dir)[0] + "/")
         repo = git.Repo()
         sha = repo.head.object.hexsha
@@ -36,7 +34,6 @@ def clone_repo(git_repo, tmp_dir):
 
 
 def clone_chart(chart_repo, tmp_dir):
-    # git_repo = input("Please provide the scm repo: ")
     if not validate_url(chart_repo):
         print("The URL is not right. Please enter the url in 'https://<domain>/repos/<repo>' format")
         exit()
@@ -46,7 +43,7 @@ def clone_chart(chart_repo, tmp_dir):
         os.chdir(tmp_dir + os.listdir(tmp_dir)[0] + "/")
         print("Preparing K8s objects...")
         git.Git(tmp_dir).clone(chart_repo)
-        return tmp_dir + os.listdir(tmp_dir)[0]
+        return tmp_dir + "kuber-charts"
     except Exception as clone_exception:
         print("Unable to clone")
         print(clone_exception)

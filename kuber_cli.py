@@ -3,6 +3,9 @@ from k8s_module import *
 from git_module import *
 from kubernetes import client, config
 from helm_module import *
+import subprocess
+
+subprocess.run("clear")
 
 print("""
     ======== WALMART HACKATHON 2020 ========
@@ -17,8 +20,8 @@ print("""
                                          
 """
                                                    )
-# git_repo = input("Please provide the scm repo: ")
-git_repo = "https://github.com/devops-pr/walmart_hackathon.git"
+git_repo = input("Please provide the scm repo: ")
+# git_repo = "https://github.com/devops-pr/walmart_hackathon.git"
 working_dir = "/tmp/kuber_tmp/"
 create_workdir(git_repo, working_dir)
 project_path, latest_commit_hash, app_name = clone_repo(git_repo, working_dir)
@@ -65,7 +68,7 @@ if app_name in available_ns:
     # TODO: attemps for y/n
     if deploy == "d":
         print("Deploying latest application version...")   # deploy(app_name)
-        updrade_app(app_name, port, chart_path)
+        updrade_app(app_name, port, chart_path, latest_commit_hash)
         endpoint_display()
     elif deploy == "e":
         endpoint_display()
@@ -80,7 +83,7 @@ else:
     try:
         print("Creating namesapace...")
         corev1apiclient.create_namespace(v1namespaceclient)
-        install_app(app_name, port, chart_path)
+        install_app(app_name, port, chart_path, latest_commit_hash)
         endpoint_display()
     except Exception as e:
         print(e)

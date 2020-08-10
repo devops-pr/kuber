@@ -1,16 +1,16 @@
 import subprocess
 
 
-def install_app(app, port, chart_path):
-    install_command = ["helm", "install", app, "--namespace="+app,
-                       "--set", "image.repository=devopspr/"+app,
-                       "--set", "image.tag=latest",
+def install_app(app, port, chart_path, commit_hash):
+    install_command = ["helm", "install", app, "--namespace=" + app,
+                       "--set", "image.repository=devopspr/" + app,
+                       "--set", "image.tag=" + commit_hash,
                        "--set", "container.port="+str(port),
                        "--set", "service.port="+str(port),
                        "--set", "service.type=NodePort", chart_path+"/",
-                       "--set", "fullnameOverride="+app + "-kuber",
-                       "--set", "nameOverride="+app,
-                       "--wait"]
+                       "--set", "fullnameOverride=" + app + "-kuber",
+                       "--set", "nameOverride=" + app
+                       ]
     # print(install_command)
     try:
         subprocess.run(install_command)
@@ -18,10 +18,10 @@ def install_app(app, port, chart_path):
         print(e)
 
 
-def updrade_app(app, port, chart_path):
-    install_command = ["helm", "upgrade", app, "--namespace="+app,
-                       "--set", "image.repository=devopspr/"+app,
-                       "--set", "image.tag=latest",
+def updrade_app(app, port, chart_path, commit_hash):
+    install_command = ["helm", "upgrade", app, "--namespace=" + app,
+                       "--set", "image.repository=devopspr/" + app,
+                       "--set", "image.tag=" + commit_hash,
                        "--set", "container.port=" + str(port),
                        "--set", "service.port=" + str(port),
                        "--set", "fullnameOverride=" + app + "-kuber",
@@ -35,4 +35,4 @@ def updrade_app(app, port, chart_path):
 
 
 if __name__ == '__main__':
-    install_app("walmart-hackathon", 5000, "/tmp/")
+    pass
