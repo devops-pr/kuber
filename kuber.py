@@ -80,14 +80,14 @@ class Kuber:
 
         self.enable_autoscaling.set('N')
 
-        self.enable_autoscaling_y_radiobuttont = ttk.Radiobutton(self.frame_content, text='Yes',
-                                                           variable = self.enable_autoscaling, value='Y',
-                                                           command = self.enable_min_max)
-        self.enable_autoscaling_y_radiobuttont.grid(row = 32, column = 1, padx=5, sticky='w')
-        self.enable_autoscaling_n_radiobuttont = ttk.Radiobutton(self.frame_content, text='No',
-                                                            variable = self.enable_autoscaling, value='N',
-                                                            command = self.disable_min_max)
-        self.enable_autoscaling_n_radiobuttont.grid(row = 32, column = 1, padx=55, sticky='w')
+        self.enable_autoscaling_y_radiobutton = ttk.Radiobutton(self.frame_content, text='Yes',
+                                                                variable = self.enable_autoscaling, value='Y',
+                                                                command = self.enable_min_max)
+        self.enable_autoscaling_y_radiobutton.grid(row = 32, column = 1, padx=5, sticky='w')
+        self.enable_autoscaling_n_radiobutton = ttk.Radiobutton(self.frame_content, text='No',
+                                                                variable = self.enable_autoscaling, value='N',
+                                                                command = self.disable_min_max)
+        self.enable_autoscaling_n_radiobutton.grid(row = 32, column = 1, padx=55, sticky='w')
 
 
 # BUTTONS
@@ -188,6 +188,20 @@ class Kuber:
         if self.incorrect_counter == 0:
             self.validate_button.grid_forget()
             self.clear_button.grid_forget()
+            self.style = ttk.Style()
+
+            self.git_url_entry.state(['disabled'])
+            self.docker_hub_user_entry.state(['disabled'])
+            self.docker_hub_password_entry.state(['disabled'])
+            self.app_port_entry.state(['disabled'])
+            self.max_no_of_pods_spinbox.config(state='disabled')
+            self.min_no_of_pods_spinbox.config(state='disabled')
+            self.no_of_pods_spinbox.config(state='disabled')
+            self.enable_autoscaling_n_radiobutton.state(['disabled'])
+            self.enable_autoscaling_y_radiobutton.state(['disabled'])
+            self.context_combobox.state(['disabled'])
+
+
             self.onboard_button.grid(row = 44, column = 0, columnspan = 2, padx=30, pady=5, sticky='w')
 
     def onboard(self):

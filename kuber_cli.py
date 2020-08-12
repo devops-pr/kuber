@@ -62,7 +62,6 @@ def endpoint_display():
 if app_name in available_ns:
     deploy = input("The app is already onboarded. "
                    "\nWhat you wish to do?[C[Cleanup app] / D[Deploy] / E[Display endpoint and exit]]: ").lower()
-    # TODO: attemps for y/n
     if deploy == "d":
         print("Deploying latest application version...")   # deploy(app_name)
         updrade_app(app_name, port, chart_path, latest_commit_hash)
