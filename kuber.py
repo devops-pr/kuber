@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from k8s_module import available_contexts
 from common import *
+from docker_module import docker_login
 
 
 class Kuber:
@@ -39,8 +40,8 @@ class Kuber:
         ttk.Label(self.frame_content, text="Git URL: ").grid(row = 4, column = 0, columnspan = 2, padx=7, sticky='sw')
         ttk.Label(self.frame_content, text="K8s Cluster: ").grid(row=12, column = 0, padx=7, sticky='sw')
         ttk.Label(self.frame_content, text="No. of pods: ").grid(row=12, column=1, padx=5, sticky='sw')
-        ttk.Label(self.frame_content, text="Dockerhub Username: ").grid(row = 20, column = 0, padx=7, sticky='sw')
-        ttk.Label(self.frame_content, text="Dockerhub Passsword: ").grid(row = 20, column = 1, padx=5, sticky='sw')
+        ttk.Label(self.frame_content, text="Dockerhub: \nUsername: ").grid(row = 20, column = 0, padx=7, sticky='sw')
+        ttk.Label(self.frame_content, text="\nPasssword: ").grid(row = 20, column = 1, padx=5, sticky='sw')
         ttk.Label(self.frame_content, text="App Port: ").grid(row = 28, column = 0, padx=7, sticky='sw')
         ttk.Label(self.frame_content, text="Enable Autoscaling: ").grid(row = 28, column = 1, padx=5, sticky='sw' )
         ttk.Label(self.frame_content, text="Maximum No of pods: ").grid(row = 36, column = 1, padx=7, sticky='w')
@@ -49,17 +50,23 @@ class Kuber:
         #Error labels
         self.invalid_url = ttk.Label(self.frame_content, text="Invalid URL!!! ", foreground = 'red')
         self.inaccessible_url = ttk.Label(self.frame_content, text="Inaccessible URL!!! ", foreground = 'red')
+        self.invalid_port = ttk.Label(self.frame_content, text="Invalid Port!!! ", foreground='red')
+        self.invalid_docker_username = ttk.Label(self.frame_content, text="Wrong!!! ", foreground='red')
+        self.invalid_docker_password = ttk.Label(self.frame_content, text="Wrong!!! ", foreground='red')
+        self.invalid_max_no_of_pods = ttk.Label(self.frame_content, text="Wrong!!! ", foreground='red')
+        self.invalid_min_no_of_pods = ttk.Label(self.frame_content, text="Wrong!!! ", foreground='red')
 
         #Success labels
         self.accessible_url = ttk.Label(self.frame_content, text="\u2713", foreground = 'green')
+        self.valid_port = ttk.Label(self.frame_content, text="\u2713", foreground = 'green')
+        self.valid_docker_username = ttk.Label(self.frame_content, text="\u2713", foreground ='green')
+        self.valid_docker_password = ttk.Label(self.frame_content, text="\u2713", foreground ='green')
+        self.valid_max_no_of_pods = ttk.Label(self.frame_content, text="\u2713", foreground ='green')
+        self.valid_min_no_of_pods = ttk.Label(self.frame_content, text="\u2713", foreground ='green')
 
 # ENTRY
         self.git_url_entry = ttk.Entry(self.frame_content, width=42, font = ('Arial', 10))
         self.git_url_entry.grid(row = 8, column = 0, columnspan = 2, padx=7, sticky='nw')
-        # self.cluster = ttk.Entry(self.frame_content, font=('Arial', 10))
-        # self.cluster.grid(row=16, column=0, padx=5, sticky='nw')
-        # self.pods_count = ttk.Entry(self.frame_content, font=('Arial', 10))
-        # self.pods_count.grid(row=16, column=1, padx=5, sticky='nw')
         self.docker_hub_user_entry = ttk.Entry(self.frame_content, font = ('Arial', 10))
         self.docker_hub_user_entry.grid(row = 24, column = 0, padx=7, sticky='nw')
         self.docker_hub_password_entry = ttk.Entry(self.frame_content, font = ('Arial', 10))
@@ -134,8 +141,11 @@ class Kuber:
         self.docker_hub_user_entry.delete(0, 'end')
         self.app_port_entry.delete(0, 'end')
         self.docker_hub_password_entry.delete(0, 'end')
+        self.cleanup_validation_labels()
 
     def validate(self):
+        self.cleanup_validation_labels()
+        # Validate GIT access
         if not validate_url(self.git_url_entry.get()):
             self.invalid_url.grid(row=4, column=0, columnspan=2, padx=55, sticky='sw')
         elif not verify_url_accessibility(self.git_url_entry.get()):
@@ -143,6 +153,52 @@ class Kuber:
         else:
             self.accessible_url.grid(row=4, column=0, columnspan=2, padx=55, sticky='sw')
 
+        # Validate Port
+        if not (self.app_port_entry.get()).isdigit():
+            self.invalid_port.grid(row=28, column=0, columnspan=2, padx=55, sticky='sw')
+        else:
+            self.valid_port.grid(row=28, column=0, columnspan=2, padx=55, sticky='sw')
+
+        # Validate Docker Credentials
+        if not docker_login(self.docker_hub_user_entry.get(), self.docker_hub_password_entry.get()) == "Login Succeeded":
+            self.invalid_docker_username.grid(row=20, column=0, columnspan=2, padx=75, sticky='sw')
+            self.invalid_docker_password.grid(row=20, column=1, columnspan=2, padx=75, sticky='sw')
+        else:
+            self.valid_docker_username.grid(row=20, column=0, columnspan=2, padx=75, sticky='sw')
+            self.valid_docker_password.grid(row=20, column=1, columnspan=2, padx=75, sticky='sw')
+
+        # print((self.min_no_of_pods).get())
+        # print((self.max_no_of_pods).get())
+        # Validate min max pod
+        if (self.enable_autoscaling).get() == "Y":
+            if (self.min_no_of_pods).get() > (self.max_no_of_pods).get():
+                self.invalid_min_no_of_pods.grid(row=36, column=0, columnspan=2, padx=75, sticky='sw')
+                self.invalid_max_no_of_pods.grid(row=36, column=1, columnspan=2, padx=75, sticky='sw')
+            else:
+                self.valid_min_no_of_pods.grid(row=36, column=0, columnspan=2, padx=120, sticky='sw')
+                self.valid_max_no_of_pods.grid(row=36, column=1, columnspan=2, padx=120, sticky='sw')
+
+
+
+
+
+
+
+
+    def cleanup_validation_labels(self):
+        self.invalid_url.grid_forget()
+        self.inaccessible_url.grid_forget()
+        self.accessible_url.grid_forget()
+        self.invalid_port.grid_forget()
+        self.valid_port.grid_forget()
+        self.valid_docker_username.grid_forget()
+        self.invalid_docker_username.grid_forget()
+        self.valid_docker_password.grid_forget()
+        self.invalid_docker_password.grid_forget()
+        self.invalid_min_no_of_pods.grid_forget()
+        self.valid_min_no_of_pods.grid_forget()
+        self.invalid_max_no_of_pods.grid_forget()
+        self.valid_max_no_of_pods.grid_forget()
 
 
 

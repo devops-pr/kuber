@@ -54,7 +54,7 @@ def push_image(image, remote_image_availability):
             else:
                 p = getpass.getpass(prompt='Provide your dockerhub password: ')
                 if context.verify(p, hashed_password):
-                    docker_client.login(username='devopspr', password=p)
+                    docker_login("devopspr", p)
                     print("Pushing the image to registry...")
                     docker_client.images.push(image)
                     break
@@ -70,12 +70,22 @@ def push_image(image, remote_image_availability):
             print(e)
 
 
+def docker_login(user, password):
+    try:
+        login_return = docker_client.login(username=user, password=password)
+        return login_return['Status']
+    except Exception as e:
+        return e
+
+
 if __name__ == '__main__':
-    project_path, latest_commit_hash, app_name = clone_repo()
-    app_name = app_name.replace("_", "-")
-    image_name = "devopspr/" + app_name
-    tag = image_name + ":" + latest_commit_hash
-    image_available_remote = check_image_availability_on_repo(image_name, latest_commit_hash)
-    image_available_local = check_image_availability_on_local(tag)
-    build_image(project_path, tag, image_available_local, image_name)
-    push_image(image_name, image_available_remote)
+    pass
+    # project_path, latest_commit_hash, app_name = clone_repo()
+    # app_name = app_name.replace("_", "-")
+    # image_name = "devopspr/" + app_name
+    # tag = image_name + ":" + latest_commit_hash
+    # image_available_remote = check_image_availability_on_repo(image_name, latest_commit_hash)
+    # image_available_local = check_image_availability_on_local(tag)
+    # build_image(project_path, tag, image_available_local, image_name)
+    # push_image(image_name, image_available_remote)
+    docker_login("", "")
