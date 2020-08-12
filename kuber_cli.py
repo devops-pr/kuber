@@ -18,7 +18,7 @@ print("""
 """
                                                    )
 git_repo = input("Please provide the scm repo: ")
-# git_repo = "https://github.com/devops-pr/walmart_hackathon.git"
+# git_repo = "https://github.com/devops-pr/walmart_hackathon.git" https://github.com/devops-pr/sample-app.git
 working_dir = "/tmp/kuber_tmp/"
 create_workdir(git_repo, working_dir)
 project_path, latest_commit_hash, app_name = clone_repo(git_repo, working_dir)

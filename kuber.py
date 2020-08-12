@@ -95,6 +95,7 @@ class Kuber:
         self.validate_button.grid(row = 44, column = 0, padx=0, pady=5, sticky='e')
         self.clear_button = ttk.Button(self.frame_content, text='Clear', command = self.clear)
         self.clear_button.grid(row = 44, column = 1, padx=0, pady=5, sticky='w')
+        self.onboard_button = ttk.Button(self.frame_content, text='Lets Onboard', command=self.onboard, width = 20)
 
 # SPINBOXES
         self.min_no_of_pods = IntVar()
@@ -144,18 +145,22 @@ class Kuber:
         self.cleanup_validation_labels()
 
     def validate(self):
+        self.incorrect_counter = 0
         self.cleanup_validation_labels()
         # Validate GIT access
         if not validate_url(self.git_url_entry.get()):
             self.invalid_url.grid(row=4, column=0, columnspan=2, padx=55, sticky='sw')
+            self.incorrect_counter += 1
         elif not verify_url_accessibility(self.git_url_entry.get()):
             self.inaccessible_url.grid(row=4, column=0, columnspan=2, padx=55, sticky='sw')
+            self.incorrect_counter += 1
         else:
             self.accessible_url.grid(row=4, column=0, columnspan=2, padx=55, sticky='sw')
 
         # Validate Port
         if not (self.app_port_entry.get()).isdigit():
             self.invalid_port.grid(row=28, column=0, columnspan=2, padx=55, sticky='sw')
+            self.incorrect_counter += 1
         else:
             self.valid_port.grid(row=28, column=0, columnspan=2, padx=55, sticky='sw')
 
@@ -163,6 +168,7 @@ class Kuber:
         if not docker_login(self.docker_hub_user_entry.get(), self.docker_hub_password_entry.get()) == "Login Succeeded":
             self.invalid_docker_username.grid(row=20, column=0, columnspan=2, padx=75, sticky='sw')
             self.invalid_docker_password.grid(row=20, column=1, columnspan=2, padx=75, sticky='sw')
+            self.incorrect_counter += 1
         else:
             self.valid_docker_username.grid(row=20, column=0, columnspan=2, padx=75, sticky='sw')
             self.valid_docker_password.grid(row=20, column=1, columnspan=2, padx=75, sticky='sw')
@@ -174,9 +180,18 @@ class Kuber:
             if (self.min_no_of_pods).get() > (self.max_no_of_pods).get():
                 self.invalid_min_no_of_pods.grid(row=36, column=0, columnspan=2, padx=75, sticky='sw')
                 self.invalid_max_no_of_pods.grid(row=36, column=1, columnspan=2, padx=75, sticky='sw')
+                self.incorrect_counter += 1
             else:
                 self.valid_min_no_of_pods.grid(row=36, column=0, columnspan=2, padx=120, sticky='sw')
                 self.valid_max_no_of_pods.grid(row=36, column=1, columnspan=2, padx=120, sticky='sw')
+
+        if self.incorrect_counter == 0:
+            self.validate_button.grid_forget()
+            self.clear_button.grid_forget()
+            self.onboard_button.grid(row = 44, column = 0, columnspan = 2, padx=30, pady=5, sticky='w')
+
+    def onboard(self):
+        print("Onboarding startde...")
 
 
 
