@@ -1,7 +1,5 @@
 requests
 gitpython
 docker
-tqdm
 passlib
 kubernetes
-helm-charts

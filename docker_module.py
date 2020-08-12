@@ -1,5 +1,3 @@
-# https://github.com/devops-pr/walmart_hackathon.git
-
 import docker
 from passlib.context import CryptContext
 import getpass

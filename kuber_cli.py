@@ -3,9 +3,6 @@ from k8s_module import *
 from git_module import *
 from kubernetes import client, config
 from helm_module import *
-import subprocess
-
-subprocess.run("clear")
 
 print("""
     ======== WALMART HACKATHON 2020 ========
