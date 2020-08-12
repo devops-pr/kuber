@@ -3,7 +3,7 @@ from kubernetes import config
 
 
 def context_selection():
-    contexts, active_context = config.list_kube_config_contexts()
+    active_context, contexts = available_contexts()
     if not contexts:
         print("Cannot find any context in kube-config file.")
         exit(0)
@@ -36,6 +36,12 @@ def context_selection():
             else:
                 print("Wrong input provided for 3 attempts. Exiting...")
                 exit(0)
+
+
+def available_contexts():
+    contexts, active_context = config.list_kube_config_contexts()
+    return active_context, contexts
+
 
 def get_available_ns(client):
     global available_ns

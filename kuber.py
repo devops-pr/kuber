@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from k8s_module import available_contexts
 
 
 class Kuber:
@@ -45,9 +46,9 @@ class Kuber:
 # ENTRY
         self.git_url_entry = ttk.Entry(self.frame_content, width=42, font = ('Arial', 10))
         self.git_url_entry.grid(row = 8, column = 0, columnspan = 2, padx=7, sticky='nw')
-        self.cluster = ttk.Entry(self.frame_content, font=('Arial', 10))
-        self.cluster.grid(row=16, column=0, padx=5, sticky='nw')
-        self.pods_count = ttk.Entry(self.frame_content, font=('Arial', 10))
+        # self.cluster = ttk.Entry(self.frame_content, font=('Arial', 10))
+        # self.cluster.grid(row=16, column=0, padx=5, sticky='nw')
+        # self.pods_count = ttk.Entry(self.frame_content, font=('Arial', 10))
         # self.pods_count.grid(row=16, column=1, padx=5, sticky='nw')
         self.docker_hub_user_entry = ttk.Entry(self.frame_content, font = ('Arial', 10))
         self.docker_hub_user_entry.grid(row = 24, column = 0, padx=7, sticky='nw')
@@ -78,21 +79,27 @@ class Kuber:
 
 
 # SPINBOXES
-        min_no_of_pods = IntVar()
-        self.min_no_of_pods_spinbox = Spinbox(self.frame_content, from_=1, to=3, textvariable=min_no_of_pods, width=10,
+        self.min_no_of_pods = IntVar()
+        self.min_no_of_pods_spinbox = Spinbox(self.frame_content, from_=1, to=3, textvariable=self.min_no_of_pods, width=10,
                                               state = 'disabled')
         self.min_no_of_pods_spinbox.grid(row = 40, column = 0, padx=7, pady=5, sticky='w')
 
 
-        max_no_of_pods = IntVar()
-        self.max_no_of_pods_spinbox = Spinbox(self.frame_content, from_=1, to=3, textvariable=max_no_of_pods, width=10,
+        self.max_no_of_pods = IntVar()
+        self.max_no_of_pods_spinbox = Spinbox(self.frame_content, from_=1, to=3, textvariable=self.max_no_of_pods, width=10,
                                               state = 'disabled')
         self.max_no_of_pods_spinbox.grid(row = 40, column = 1, padx=5, pady=5, sticky='w')
 
-        no_of_pods = IntVar()
-        self.no_of_pods_spinbox = Spinbox(self.frame_content, from_=1, to=3, textvariable=no_of_pods, width=10,
+        self.no_of_pods = IntVar()
+        self.no_of_pods_spinbox = Spinbox(self.frame_content, from_=1, to=3, textvariable=self.no_of_pods, width=10,
                                           state = 'readonly')
         self.no_of_pods_spinbox.grid(row=16, column=1, padx=5, pady=5, sticky='w')
+
+#COMBO BOX
+        self.context = StringVar()
+        self.context_combobox = ttk.Combobox(self.frame_content, textvariable=self.context, width = 12, state= 'readonly')
+        self.context_combobox.grid(row=16, column=0, padx=5, pady=5, sticky='nw')
+        self.context_combobox.config(values=())
 
     def enable_min_max(self):
         self.max_no_of_pods_spinbox.config(state = 'readonly')
@@ -105,6 +112,16 @@ class Kuber:
 def main():
     root = Tk()
     feedback = Kuber(root)
+
+    current_context, all_contexts =  available_contexts()
+
+    all_contexts_tuple = tuple([context['name'] for context in all_contexts])
+    current_context_name = current_context['name']
+    feedback.context.set(current_context_name)
+    feedback.context_combobox.config(values = all_contexts_tuple)
+
+    GIT_URL = feedback.git_url_entry.get()
+
     root.mainloop()
 
 
