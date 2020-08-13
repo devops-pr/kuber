@@ -45,27 +45,12 @@ def build_image(path, image_tag, local_image_availability, image):
 
 
 def push_image(image, remote_image_availability):
-    attempts = 0
-    while attempts < 3:
+    if remote_image_availability:
+        print("Image already exist in registry. skipping push...")
+    else:
         try:
-            if remote_image_availability:
-                print("Image already exist in registry. skipping push...")
-                break
-            else:
-                p = getpass.getpass(prompt='Provide your dockerhub password: ')
-                if context.verify(p, hashed_password):
-                    docker_login("devopspr", p)
-                    print("Pushing the image to registry...")
-                    docker_client.images.push(image)
-                    break
-                else:
-                    if attempts < 2:
-                        print("Wrong password!!! Try again.")
-                        attempts += 1
-                        continue
-                    else:
-                        print("You entered wrong password 3 times. Exiting...")
-                        exit()
+            print("Pushing the image to registry...")
+            docker_client.images.push(image)
         except Exception as e:
             print(e)
 
@@ -76,6 +61,26 @@ def docker_login(user, password):
         return login_return['Status']
     except Exception as e:
         return e
+
+def get_docker_hub_credentials():
+    docker_user_name = input("Provide your dockerhub username: ")
+    docker_password = getpass.getpass(prompt='Provide your dockerhub password: ')
+    attempts = 0
+    while attempts < 3:
+        try:
+            if docker_login(docker_user_name, docker_password) == "Login Succeeded":
+                break
+            else:
+                if attempts < 2:
+                    print("Wrong credentials!!! Try again.")
+                    attempts += 1
+                    continue
+                else:
+                    print("You entered wrong credentials 3 times. Exiting...")
+                    exit()
+        except Exception as e:
+            print(e)
+    return docker_user_name
 
 
 if __name__ == '__main__':

@@ -1,20 +1,22 @@
 import tkinter
 from tkinter import *
 from tkinter import ttk
-from k8s_module import available_contexts
 from common import *
-from docker_module import docker_login
 import printlogger
-import kuber_cli
+from docker_module import *
+from k8s_module import *
+from git_module import *
+from kubernetes import client, config
+from helm_module import *
 
 
 class Kuber:
 
     def __init__(self, master):
-        master.title('Walmart Hackathon 2020')
-        master.geometry('290x390')
-        master.resizable(False, False)
-        master.configure(background='#ececec')
+        self.master = master.title('Walmart Hackathon 2020')
+        self.master = master.geometry('290x390')
+        self.master = master.resizable(True, True)
+        self.master = master.configure(background='#ececec')
 
         self.t = tkinter.Text()
         self.incorrect_counter = 0
@@ -24,6 +26,7 @@ class Kuber:
 
         # replace sys.stdout with our object
         sys.stdout = self.pl
+        sys.stderr = self.pl
 
         self.style = ttk.Style()
         self.style.configure('TFrame', background='#051f42')
@@ -200,8 +203,8 @@ class Kuber:
                 self.valid_max_no_of_pods.grid(row=36, column=1, columnspan=2, padx=120, sticky='sw')
 
         if self.incorrect_counter == 0:
-            self.validate_button.grid_forget()
-            self.clear_button.grid_forget()
+            self.validate_button.grid_remove()
+            self.clear_button.grid_remove()
             self.style = ttk.Style()
 
             self.git_url_entry.state(['disabled'])
@@ -217,25 +220,55 @@ class Kuber:
             self.onboard_button.grid(row=44, column=0, columnspan=2, padx=30, pady=5, sticky='w')
 
     def onboard(self):
-        # master.geometry
         self.t.pack()
-        print("Onboarding started...")
-        # kuber_cli.main()
+        print("Onboarding started...\n\n")
+
+        print("""
+ ====WALMART HACKATHON 2020=====
+  _   ___   _______ ___________ 
+ | | / / | | | ___ \  ___| ___ \\
+ | |/ /| | | | |_/ / |__ | |_/ /
+ |    \| | | | ___ \  __||    / 
+ | |\  \ |_| | |_/ / |___| |\ \ 
+ \_| \_/\___/\____/\____/\_| \_|
+ AN UBER TOOL FOR K8S ONBOARDING
+                               
+                               
+""")
+        self.git_repo = self.git_url_entry.get()
+        self.working_dir = "/tmp/kuber_tmp/"
+        create_workdir(self.git_repo, self.working_dir)
+        self.project_path, self.latest_commit_hash, self.app_name = clone_repo(self.git_repo, self.working_dir)
+        self.app_name = self.app_name.replace("_", "-")
+        self.image_name = self.docker_hub_user_entry.get() + "/" + self.app_name
+        self.tag = self.image_name + ":" + self.latest_commit_hash
+        self.image_available_remote = check_image_availability_on_repo(self.image_name, self.latest_commit_hash)
+        self.image_available_local = check_image_availability_on_local(self.tag)
+        build_image(self.project_path, self.tag, self.image_available_local, self.image_name)
+        push_image(self.image_name, self.image_available_remote)
+        self.app_context = self.context.get()
+        self.corev1apiclient = client.CoreV1Api(api_client=config.new_client_from_config(context=self.app_context))
+        self.available_ns = get_available_ns(self.corev1apiclient)
+        self.v1namespaceclient = client.V1Namespace()
+        self.v1namespaceclient.metadata = client.V1ObjectMeta(name=self.app_name)
+        self.chart_git_repo = "https://github.com/devops-pr/kuber-charts.git"
+        self.chart_path = clone_chart(self.chart_git_repo, self.working_dir)
+        self.port = self.app_port_entry.get()
 
     def cleanup_validation_labels(self):
-        self.invalid_url.grid_forget()
-        self.inaccessible_url.grid_forget()
-        self.accessible_url.grid_forget()
-        self.invalid_port.grid_forget()
-        self.valid_port.grid_forget()
-        self.valid_docker_username.grid_forget()
-        self.invalid_docker_username.grid_forget()
-        self.valid_docker_password.grid_forget()
-        self.invalid_docker_password.grid_forget()
-        self.invalid_min_no_of_pods.grid_forget()
-        self.valid_min_no_of_pods.grid_forget()
-        self.invalid_max_no_of_pods.grid_forget()
-        self.valid_max_no_of_pods.grid_forget()
+        self.invalid_url.grid_remove()
+        self.inaccessible_url.grid_remove()
+        self.accessible_url.grid_remove()
+        self.invalid_port.grid_remove()
+        self.valid_port.grid_remove()
+        self.valid_docker_username.grid_remove()
+        self.invalid_docker_username.grid_remove()
+        self.valid_docker_password.grid_remove()
+        self.invalid_docker_password.grid_remove()
+        self.invalid_min_no_of_pods.grid_remove()
+        self.valid_min_no_of_pods.grid_remove()
+        self.invalid_max_no_of_pods.grid_remove()
+        self.valid_max_no_of_pods.grid_remove()
 
 
 def main():

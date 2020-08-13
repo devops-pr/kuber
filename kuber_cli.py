@@ -20,18 +20,20 @@ def main():
                                          
 """
           )
-    git_repo = input("Please provide the scm repo: ")
-    # git_repo = "https://github.com/devops-pr/walmart_hackathon.git" https://github.com/devops-pr/sample-app.git
+    # git_repo = input("Please provide the scm repo: ")
+    port = input("What port the application listen on?: ")
+    docker_user_name = get_docker_hub_credentials()
+    git_repo = "https://github.com/devops-pr/sample-app.git" # https://github.com/devops-pr/sample-app.git
     working_dir = "/tmp/kuber_tmp/"
     create_workdir(git_repo, working_dir)
     project_path, latest_commit_hash, app_name = clone_repo(git_repo, working_dir)
     app_name = app_name.replace("_", "-")
-    image_name = "devopspr/" + app_name
+    image_name = docker_user_name + "/" + app_name
     tag = image_name + ":" + latest_commit_hash
     image_available_remote = check_image_availability_on_repo(image_name, latest_commit_hash)
     image_available_local = check_image_availability_on_local(tag)
     build_image(project_path, tag, image_available_local, image_name)
-    push_image(image_name, image_available_remote)
+    push_image(image_name,image_available_remote)
     app_context = context_selection()
     corev1apiclient = client.CoreV1Api(api_client=config.new_client_from_config(context=app_context))
     available_ns = get_available_ns(corev1apiclient)
@@ -39,7 +41,6 @@ def main():
     v1namespaceclient.metadata = client.V1ObjectMeta(name=app_name)
     chart_git_repo = "https://github.com/devops-pr/kuber-charts.git"
     chart_path = clone_chart(chart_git_repo, working_dir)
-    port = 5000
 
     def endpoint_display():
         APP_PORT = corev1apiclient.list_namespaced_service(app_name,
