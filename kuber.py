@@ -201,6 +201,7 @@ class Kuber:
                 self.valid_max_no_of_pods.grid(row=36, column=1, columnspan=2, padx=120, sticky='sw')
 
         if self.incorrect_counter == 0:
+            print("Provided values validated...")
             self.validate_button.grid_remove()
             self.clear_button.grid_remove()
             self.style = ttk.Style()
@@ -219,7 +220,7 @@ class Kuber:
         # self.progressbar.start()
 
     def onboard(self):
-        self.master.geometry('320x920+50+100')
+        self.master.geometry('400x940+50+100')
         # self.master.geometry('320x510+50+100')
         self.progress_label.grid(row=43, column=0, columnspan=2, padx=30, pady=5, sticky='w')
         self.progress_label.config(text = "Onboarding started...")
@@ -262,6 +263,7 @@ class Kuber:
         # self.progressbar.stop()
         if self.app_name in self.available_ns:
             self.progress_label.config(text="Application is already onboarded...")
+            print("Application is already onboarded. Press Deploy for fresh deployment.")
             self.onboard_button.grid_remove()
             self.validate_button.grid()
             self.clear_button.grid()
