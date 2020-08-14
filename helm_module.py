@@ -9,7 +9,7 @@ def install_app(app, port, chart_path, commit_hash, replicas, enable_autoscaling
                        "--set", "image.tag=" + commit_hash,
                        "--set", "container.port="+str(port),
                        "--set", "service.port="+str(port),
-                       "--set", "service.type=NodePort", chart_path+"/",
+                       "--set", "service.type=NodePort",
                        "--set", "fullnameOverride=" + app + "-kuber",
                        "--set", "nameOverride=" + app,
                        "--set", "replicaCount=" + str(replicas),

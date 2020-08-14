@@ -39,14 +39,14 @@ def build_image(path, image_tag, local_image_availability, image):
             print("Tagging image with latest...")
             docker.client.from_env().images.get(image_tag).tag(image, 'latest')
         else:
-            print("Image already exist locally. skipping build...")
+            print("Image already exist locally.\nskipping build...")
     except Exception as e:
         print(e)
 
 
 def push_image(image, remote_image_availability):
     if remote_image_availability:
-        print("Image already exist in registry. skipping push...")
+        print("Image already exist in registry.\nskipping push...")
     else:
         try:
             print("Pushing the image to registry...")

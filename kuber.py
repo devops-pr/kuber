@@ -16,7 +16,7 @@ class Kuber:
     def __init__(self, master):
         self.master = master
         self.master.title('Walmart Hackathon 2020')
-        self.master.geometry('320x510+50+100')
+        self.master.geometry('320x510+750+100')
         self.master.resizable(False, False)
         self.master.configure(background='#ececec')
         self.incorrect_counter = 0
@@ -220,7 +220,7 @@ class Kuber:
         # self.progressbar.start()
 
     def onboard(self):
-        self.master.geometry('400x940+50+100')
+        self.master.geometry('320x940+750+100')
         # self.master.geometry('320x510+50+100')
         self.progress_label.grid(row=43, column=0, columnspan=2, padx=30, pady=5, sticky='w')
         self.progress_label.config(text = "Onboarding started...")
@@ -263,7 +263,7 @@ class Kuber:
         # self.progressbar.stop()
         if self.app_name in self.available_ns:
             self.progress_label.config(text="Application is already onboarded...")
-            print("Application is already onboarded. Press Deploy for fresh deployment.")
+            print("Application is already onboarded.\nPress Deploy for fresh deployment.")
             self.onboard_button.grid_remove()
             self.validate_button.grid()
             self.clear_button.grid()
@@ -272,6 +272,12 @@ class Kuber:
         else:
             try:
                 print("Creating namesapace...")
+                self.onboard_button.grid_remove()
+                self.validate_button.grid()
+                self.clear_button.grid()
+                self.validate_button.config(text="Deploy", command=self.deploy)
+                self.clear_button.config(text="Endpoints", command=self.endpoint_display)
+                self.validate_button.config(text="Reset", command=self.reset)
                 self.corev1apiclient.create_namespace(self.v1namespaceclient)
                 if self.enable_autoscaling.get() == "N":
                     autoscaling = "false"
@@ -280,7 +286,8 @@ class Kuber:
                 install_app(self.app_name, self.port, self.chart_path, self.latest_commit_hash, self.no_of_pods.get(), autoscaling,
                             self.min_no_of_pods.get(), self.max_no_of_pods.get())
                 self.endpoint_display()
-                print("Application successfully Onboarded... Cheers!!!")
+                self.progress_label.config(text="Application successfully onboarded...")
+                print("Application successfully Onboarded... \nCheers!!!")
             except Exception as e:
                 print(e)
 
@@ -295,7 +302,7 @@ class Kuber:
             updrade_app(self.app_name, self.port, self.chart_path, self.latest_commit_hash, self.no_of_pods.get(), autoscaling,
                             self.min_no_of_pods.get(), self.max_no_of_pods.get())
             self.progress_label.config(text="Application successfully deployed...")
-            print("Application successfully deployed... Cheers!!!")
+            print("Application successfully deployed... \nCheers!!!")
             self.endpoint_display()
         except Exception as e:
             print(e)
