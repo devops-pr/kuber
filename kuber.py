@@ -14,7 +14,6 @@ from helm_module import *
 class Kuber:
 
     def __init__(self, master):
-        # root.geometry('640x280+50+100')
         self.master = master
         self.master.title('Walmart Hackathon 2020')
         self.master.geometry('320x510+50+100')
@@ -41,9 +40,9 @@ class Kuber:
         self.frame_header.pack(pady=30)
 
 # LABEL
-        self.logo = PhotoImage(file='kuber_logo.png').subsample(7, 7)
+        self.logo = PhotoImage(file='kuber_logo.png').subsample(3, 3)
         # ttk.Label(self.frame_header, image=self.logo).grid(row=0, column=0, padx=7, rowspan=2)
-        ttk.Label(self.frame_header, image=self.logo).grid(row=0, column=0, padx=7,pady=20, rowspan=2)
+        ttk.Label(self.frame_header, image=self.logo).grid(row=0, column=0, rowspan=2)
         # ttk.Label(self.frame_header, text='KUBER', style='Header.TLabel').grid(row=0, column=1)
         ttk.Label(self.frame_header, text="An uber tool for K8s onboarding").grid(row=1, column=0, sticky='s')
 
@@ -216,11 +215,12 @@ class Kuber:
             self.enable_autoscaling_n_radiobutton.configure(state=DISABLED)
             self.enable_autoscaling_y_radiobutton.configure(state=DISABLED)
             self.context_combobox.state(['disabled'])
-            self.onboard_button.grid(row=44, column=0, columnspan=2, padx=30, pady=5, sticky='w')
+            self.onboard_button.grid(row=44, column=0, columnspan=2, padx=55, pady=5, sticky='w')
         # self.progressbar.start()
 
     def onboard(self):
-        self.master.geometry('490x920+50+100')
+        self.master.geometry('320x920+50+100')
+        # self.master.geometry('320x510+50+100')
         self.progress_label.grid(row=43, column=0, columnspan=2, padx=30, pady=5, sticky='w')
         self.progress_label.config(text = "Onboarding started...")
         self.t.pack()
@@ -265,8 +265,8 @@ class Kuber:
             self.onboard_button.grid_remove()
             self.validate_button.grid()
             self.clear_button.grid()
-            self.validate_button.config(text = "Deploy latest code", command = self.deploy)
-            self.clear_button.config(text = "Provide Endpoints", command = self.endpoint_display)
+            self.validate_button.config(text = "Deploy", command = self.deploy)
+            self.clear_button.config(text = "Endpoints", command = self.endpoint_display)
         else:
             try:
                 print("Creating namesapace...")
@@ -280,7 +280,7 @@ class Kuber:
     def deploy(self):
         try:
             # self.validate_button.state(["disabled"])
-            self.validate_button.config(text = "Reset Kuber", command = self.reset)
+            self.validate_button.config(text = "Reset", command = self.reset)
             updrade_app(self.app_name, self.port, self.chart_path, self.latest_commit_hash)
             self.progress_label.config(text="Application successfully deployed...")
             print("Application successfully deployed... Cheers!!!")
@@ -333,7 +333,7 @@ class Kuber:
     def reset(self):
         self.t.pack_forget()
         self.progress_label.grid_forget()
-        self.master.geometry('290x410+50+100')
+        self.master.geometry('320x510+50+100')
         self.validate_button.config(text = "Validate", command = self.validate)
         self.clear_button.config(text = "Clear", command = self.clear)
         self.git_url_entry.state(['!disabled'])
