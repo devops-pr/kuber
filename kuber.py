@@ -17,7 +17,7 @@ class Kuber:
         # root.geometry('640x280+50+100')
         self.master = master
         self.master.title('Walmart Hackathon 2020')
-        self.master.geometry('290x410+50+100')
+        self.master.geometry('320x510+50+100')
         self.master.resizable(False, False)
         self.master.configure(background='#ececec')
         self.incorrect_counter = 0
@@ -28,8 +28,8 @@ class Kuber:
         self.pl = printlogger.PrintLogger(self.t)
 
         # replace sys.stdout with our object
-        # sys.stdout = self.pl
-        # sys.stderr = self.pl
+        sys.stdout = self.pl
+        sys.stderr = self.pl
 
         self.style = ttk.Style()
         self.style.configure('TFrame', background='#051f42')
@@ -41,10 +41,11 @@ class Kuber:
         self.frame_header.pack(pady=30)
 
 # LABEL
-        self.logo = PhotoImage(file='python_logo.gif').subsample(4, 4)
-        ttk.Label(self.frame_header, image=self.logo).grid(row=0, column=0, padx=7, rowspan=2)
-        ttk.Label(self.frame_header, text='KUBER', style='Header.TLabel').grid(row=0, column=1)
-        ttk.Label(self.frame_header, text="An uber tool for K8s onboarding").grid(row=1, column=1)
+        self.logo = PhotoImage(file='kuber_logo.png').subsample(7, 7)
+        # ttk.Label(self.frame_header, image=self.logo).grid(row=0, column=0, padx=7, rowspan=2)
+        ttk.Label(self.frame_header, image=self.logo).grid(row=0, column=0, padx=7,pady=20, rowspan=2)
+        # ttk.Label(self.frame_header, text='KUBER', style='Header.TLabel').grid(row=0, column=1)
+        ttk.Label(self.frame_header, text="An uber tool for K8s onboarding").grid(row=1, column=0, sticky='s')
 
 # *********************** CONTENT FRAME ***********************
 
@@ -54,15 +55,15 @@ class Kuber:
 # LABEL
 
         # Initial labels
-        ttk.Label(self.frame_content, text="Git URL: ").grid(row=4, column=0, columnspan=2, padx=7, sticky='sw')
-        ttk.Label(self.frame_content, text="K8s Cluster: ").grid(row=12, column=0, padx=7, sticky='sw')
+        ttk.Label(self.frame_content, text="Git URL: ").grid(row=4, column=0, columnspan=2, padx=20, sticky='sw')
+        ttk.Label(self.frame_content, text="K8s Cluster: ").grid(row=12, column=0, padx=20, sticky='sw')
         ttk.Label(self.frame_content, text="No. of pods: ").grid(row=12, column=1, padx=5, sticky='sw')
-        ttk.Label(self.frame_content, text="Dockerhub: \nUsername: ").grid(row=20, column=0, padx=7, sticky='sw')
+        ttk.Label(self.frame_content, text="Dockerhub: \nUsername: ").grid(row=20, column=0, padx=20, sticky='sw')
         ttk.Label(self.frame_content, text="\nPasssword: ").grid(row=20, column=1, padx=5, sticky='sw')
-        ttk.Label(self.frame_content, text="App Port: ").grid(row=28, column=0, padx=7, sticky='sw')
+        ttk.Label(self.frame_content, text="App Port: ").grid(row=28, column=0, padx=20, sticky='sw')
         ttk.Label(self.frame_content, text="Enable Autoscaling: ").grid(row=28, column=1, padx=5, sticky='sw')
         ttk.Label(self.frame_content, text="Maximum No of pods: ").grid(row=36, column=1, padx=7, sticky='w')
-        ttk.Label(self.frame_content, text="Minimum No of pods: ").grid(row=36, column=0, padx=5, sticky='w')
+        ttk.Label(self.frame_content, text="Minimum No of pods: ").grid(row=36, column=0, padx=20, sticky='w')
 
         # Error labels
         self.invalid_url = ttk.Label(self.frame_content, text="Invalid URL!!! ", foreground='red')
@@ -85,15 +86,15 @@ class Kuber:
         self.progress_label = ttk.Label(self.frame_content, text="", foreground='green')
 
 # ENTRY
-        self.git_url_entry = ttk.Entry(self.frame_content, width=42, font=('Arial', 10))
-        self.git_url_entry.grid(row=8, column=0, columnspan=2, padx=7, sticky='nw')
+        self.git_url_entry = ttk.Entry(self.frame_content, width=45, font=('Arial', 10))
+        self.git_url_entry.grid(row=8, column=0, columnspan=2, padx=20, sticky='nw')
         self.docker_hub_user_entry = ttk.Entry(self.frame_content, font=('Arial', 10))
-        self.docker_hub_user_entry.grid(row=24, column=0, padx=7, sticky='nw')
-        self.docker_hub_password_entry = ttk.Entry(self.frame_content, font=('Arial', 10))
+        self.docker_hub_user_entry.grid(row=24, column=0, padx=20, sticky='nw')
+        self.docker_hub_password_entry = ttk.Entry(self.frame_content, width = 18, font=('Arial', 10))
         self.docker_hub_password_entry.grid(row=24, column=1, padx=5, sticky='nw')
         self.docker_hub_password_entry.config(show='*')
         self.app_port_entry = ttk.Entry(self.frame_content, font=('Arial', 10))
-        self.app_port_entry.grid(row=32, column=0, padx=7, sticky='nw')
+        self.app_port_entry.grid(row=32, column=0, padx=20, sticky='nw')
 
 # RADIO BUTTONS
         self.enable_autoscaling = StringVar()
@@ -112,9 +113,9 @@ class Kuber:
 
 # BUTTONS
         self.validate_button = ttk.Button(self.frame_content, text='Validate', command=self.validate)
-        self.validate_button.grid(row=44, column=0, padx=0, pady=5, sticky='e')
+        self.validate_button.grid(row=44, column=0, columnspan=2, padx=50, pady=5, sticky='w')
         self.clear_button = ttk.Button(self.frame_content, text='Clear', command=self.clear)
-        self.clear_button.grid(row=44, column=1, padx=0, pady=5, sticky='w')
+        self.clear_button.grid(row=44, column=1, columnspan=2, padx=0, pady=5, sticky='w')
         self.onboard_button = ttk.Button(self.frame_content, text='Lets Onboard', command=self.onboard, width=20)
 
 # SPINBOXES
@@ -122,7 +123,7 @@ class Kuber:
         self.min_no_of_pods_spinbox = Spinbox(self.frame_content, from_=1, to=3, textvariable=self.min_no_of_pods,
                                               width=10,
                                               state='disabled')
-        self.min_no_of_pods_spinbox.grid(row=40, column=0, padx=7, pady=5, sticky='w')
+        self.min_no_of_pods_spinbox.grid(row=40, column=0, padx=20, pady=5, sticky='w')
         self.max_no_of_pods = IntVar()
         self.max_no_of_pods_spinbox = Spinbox(self.frame_content, from_=1, to=3,
                                               textvariable=self.max_no_of_pods, width=10,
@@ -138,7 +139,7 @@ class Kuber:
         self.context = StringVar()
         self.context_combobox = ttk.Combobox(self.frame_content, textvariable=self.context, width=12,
                                              state='readonly')
-        self.context_combobox.grid(row=16, column=0, padx=5, pady=5, sticky='nw')
+        self.context_combobox.grid(row=16, column=0, padx=20, pady=5, sticky='nw')
         self.context_combobox.config(values=())
 
 
