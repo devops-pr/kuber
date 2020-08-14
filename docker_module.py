@@ -57,10 +57,21 @@ def push_image(image, remote_image_availability):
 
 def docker_login(user, password):
     try:
+        if user == "":
+            user = "dummy"
+        if password == "":
+            password = "dummy"
         login_return = docker_client.login(username=user, password=password)
-        return login_return['Status']
+        if login_return['Status'] == "Login Succeeded":
+            return True
+        elif login_return['username'] == user:
+            return True
+        else:
+            return False
+
     except Exception as e:
-        return e
+        print(e)
+        return False
 
 def get_docker_hub_credentials():
     docker_user_name = input("Provide your dockerhub username: ")
@@ -68,7 +79,7 @@ def get_docker_hub_credentials():
     attempts = 0
     while attempts < 3:
         try:
-            if docker_login(docker_user_name, docker_password) == "Login Succeeded":
+            if docker_login(docker_user_name, docker_password):
                 break
             else:
                 if attempts < 2:
@@ -93,4 +104,4 @@ if __name__ == '__main__':
     # image_available_local = check_image_availability_on_local(tag)
     # build_image(project_path, tag, image_available_local, image_name)
     # push_image(image_name, image_available_remote)
-    docker_login("", "")
+    print(docker_login("devopspdcr", "Iambatman@123"))

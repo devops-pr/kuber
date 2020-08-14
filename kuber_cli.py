@@ -20,10 +20,10 @@ def main():
                                          
 """
           )
-    # git_repo = input("Please provide the scm repo: ")
+    git_repo = input("Please provide the scm repo: ")
     port = input("What port the application listen on?: ")
     docker_user_name = get_docker_hub_credentials()
-    git_repo = "https://github.com/devops-pr/sample-app.git" # https://github.com/devops-pr/sample-app.git
+    # git_repo = "https://github.com/devops-pr/sample-app.git" # https://github.com/devops-pr/walmart_hackathon.git
     working_dir = "/tmp/kuber_tmp/"
     create_workdir(git_repo, working_dir)
     project_path, latest_commit_hash, app_name = clone_repo(git_repo, working_dir)

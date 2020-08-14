@@ -13,6 +13,7 @@ def install_app(app, port, chart_path, commit_hash):
                        ]
     # print(install_command)
     try:
+        print("Deploying the app...")
         subprocess.run(install_command)
     except Exception as e:
         print(e)
@@ -29,6 +30,7 @@ def updrade_app(app, port, chart_path, commit_hash):
                        "--set", "service.type=NodePort",
                        chart_path+"/", "--wait"]
     try:
+        print("Upgrading the app...")
         subprocess.run(install_command)
     except Exception as e:
         print(e)
