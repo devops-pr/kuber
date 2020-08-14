@@ -6,7 +6,7 @@ from helm_module import *
 
 
 def main():
-    global app_name, tag, corev1apiclient, v1namespaceclient
+    # global app_name, tag, corev1apiclient, v1namespaceclient
     print("""
     ======== WALMART HACKATHON 2020 ========
     
@@ -33,7 +33,7 @@ def main():
     image_available_remote = check_image_availability_on_repo(image_name, latest_commit_hash)
     image_available_local = check_image_availability_on_local(tag)
     build_image(project_path, tag, image_available_local, image_name)
-    push_image(image_name,image_available_remote)
+    push_image(image_name, image_available_remote)
     app_context = context_selection()
     corev1apiclient = client.CoreV1Api(api_client=config.new_client_from_config(context=app_context))
     available_ns = get_available_ns(corev1apiclient)
@@ -43,23 +43,22 @@ def main():
     chart_path = clone_chart(chart_git_repo, working_dir)
 
     def endpoint_display():
-        APP_PORT = corev1apiclient.list_namespaced_service(app_name,
-                                                           label_selector="app.kubernetes.io/name=" + app_name
-                                                           ).items[0].spec.ports[0].node_port
-        GRAFANA_PORT = corev1apiclient.list_namespaced_service("monitoring",
+        application_port = corev1apiclient.list_namespaced_service(app_name,
+                                                                   label_selector="app.kubernetes.io/name=" + app_name
+                                                                   ).items[0].spec.ports[0].node_port
+        grafana_port = corev1apiclient.list_namespaced_service("monitoring",
                                                                label_selector="app.kubernetes.io/name=grafana"
                                                                ).items[0].spec.ports[0].node_port
-        PROMETHEUS_PORT = corev1apiclient.list_namespaced_service("monitoring",
-                                                                  label_selector="app=prometheus-operator-prometheus"
-                                                                  ).items[0].spec.ports[0].node_port
-        KUBERNETES_DASHBOARD_PORT = corev1apiclient.list_namespaced_service("kubernetes-dashboard",
-                                                                            label_selector="k8s-app=kubernetes-dashboard"
-                                                                            ).items[0].spec.ports[0].node_port
-        NODE = corev1apiclient.list_node().items[0].status.addresses[0].address
+        # corev1apiclient.list_namespaced_service("monitoring",
+        #                                         label_selector="app=prometheus-operator-prometheus"
+        #                                         ).items[0].spec.ports[0].node_port
+        kubernetes_dashboard_port = corev1apiclient.list_namespaced_service(
+            "kubernetes-dashboard", label_selector="k8s-app=kubernetes-dashboard").items[0].spec.ports[0].node_port
+        node = corev1apiclient.list_node().items[0].status.addresses[0].address
         print("\n\n\tAccess your app at: http://{0}:{1}\n\n\tMonitor your app at:\n\n"
               "\t\tGRAFANA: http://{0}:{2}\n"
               "\t\tKUBERNETES DASHBOARD: http://{0}:{3}\n"
-              "\n\n".format(NODE, APP_PORT, GRAFANA_PORT, KUBERNETES_DASHBOARD_PORT))
+              "\n\n".format(node, application_port, grafana_port, kubernetes_dashboard_port))
 
     if app_name in available_ns:
         deploy = input("The app is already onboarded. "

@@ -2,7 +2,6 @@ import tkinter
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
-# from common import *
 import printlogger
 from docker_module import *
 from k8s_module import *
@@ -14,16 +13,14 @@ from helm_module import *
 class Kuber:
 
     def __init__(self, master):
+
         self.master = master
         self.master.title('Walmart Hackathon 2020')
         self.master.geometry('320x510+750+100')
         self.master.resizable(False, False)
         self.master.configure(background='#ececec')
         self.incorrect_counter = 0
-        self.t = tkinter.Text(width = 65, height = 37)
-
-
-        # create instance of file like object
+        self.t = tkinter.Text(width=65, height=37)
         self.pl = printlogger.PrintLogger(self.t)
 
         # replace sys.stdout with our object
@@ -89,7 +86,7 @@ class Kuber:
         self.git_url_entry.grid(row=8, column=0, columnspan=2, padx=20, sticky='nw')
         self.docker_hub_user_entry = ttk.Entry(self.frame_content, font=('Arial', 10))
         self.docker_hub_user_entry.grid(row=24, column=0, padx=20, sticky='nw')
-        self.docker_hub_password_entry = ttk.Entry(self.frame_content, width = 18, font=('Arial', 10))
+        self.docker_hub_password_entry = ttk.Entry(self.frame_content, width=18, font=('Arial', 10))
         self.docker_hub_password_entry.grid(row=24, column=1, padx=5, sticky='nw')
         self.docker_hub_password_entry.config(show='*')
         self.app_port_entry = ttk.Entry(self.frame_content, font=('Arial', 10))
@@ -141,7 +138,6 @@ class Kuber:
         self.context_combobox.grid(row=16, column=0, padx=20, pady=5, sticky='nw')
         self.context_combobox.config(values=())
 
-
     def enable_min_max(self):
         self.max_no_of_pods_spinbox.config(state='readonly')
         self.min_no_of_pods_spinbox.config(state='readonly')
@@ -179,7 +175,7 @@ class Kuber:
 
         # Validate Docker Credentials
         login_value = docker_login(self.docker_hub_user_entry.get(),
-                            self.docker_hub_password_entry.get())
+                                   self.docker_hub_password_entry.get())
         if login_value:
             self.valid_docker_username.grid(row=20, column=0, columnspan=2, padx=75, sticky='sw')
             self.valid_docker_password.grid(row=20, column=1, columnspan=2, padx=75, sticky='sw')
@@ -223,18 +219,18 @@ class Kuber:
         self.master.geometry('320x940+750+100')
         # self.master.geometry('320x510+50+100')
         self.progress_label.grid(row=43, column=0, columnspan=2, padx=30, pady=5, sticky='w')
-        self.progress_label.config(text = "Onboarding started...")
+        self.progress_label.config(text="Onboarding started...")
         self.t.pack()
         print("Onboarding started...\n\n")
 
         print("""
  ====WALMART HACKATHON 2020=====
   _   ___   _______ ___________ 
- | | / / | | | ___ \  ___| ___ \\
+ | | / / | | | ___ \\  ___| ___ \\
  | |/ /| | | | |_/ / |__ | |_/ /
- |    \| | | | ___ \  __||    / 
- | |\  \ |_| | |_/ / |___| |\ \ 
- \_| \_/\___/\____/\____/\_| \_|
+ |    \\| | | | ___ \\  __||    / 
+ | |\\  \\ |_| | |_/ / |___| |\\ \\ 
+ \\_| \\_/\\___/\\____/\\____/\\_| \\_|
  AN UBER TOOL FOR K8S ONBOARDING
                                
                                
@@ -267,8 +263,8 @@ class Kuber:
             self.onboard_button.grid_remove()
             self.validate_button.grid()
             self.clear_button.grid()
-            self.validate_button.config(text = "Deploy", command = self.deploy)
-            self.clear_button.config(text = "Endpoints", command = self.endpoint_display)
+            self.validate_button.config(text="Deploy", command=self.deploy)
+            self.clear_button.config(text="Endpoints", command=self.endpoint_display)
         else:
             try:
                 print("Creating namesapace...")
@@ -283,7 +279,8 @@ class Kuber:
                     autoscaling = "false"
                 else:
                     autoscaling = "true"
-                install_app(self.app_name, self.port, self.chart_path, self.latest_commit_hash, self.no_of_pods.get(), autoscaling,
+                install_app(self.app_name, self.port, self.chart_path, self.latest_commit_hash, self.no_of_pods.get(),
+                            autoscaling,
                             self.min_no_of_pods.get(), self.max_no_of_pods.get())
                 self.endpoint_display()
                 self.progress_label.config(text="Application successfully onboarded...")
@@ -294,45 +291,48 @@ class Kuber:
     def deploy(self):
         try:
             # self.validate_button.state(["disabled"])
-            self.validate_button.config(text = "Reset", command = self.reset)
+            self.validate_button.config(text="Reset", command=self.reset)
             if self.enable_autoscaling.get() == "N":
                 autoscaling = "false"
             else:
                 autoscaling = "true"
-            updrade_app(self.app_name, self.port, self.chart_path, self.latest_commit_hash, self.no_of_pods.get(), autoscaling,
-                            self.min_no_of_pods.get(), self.max_no_of_pods.get())
+            updrade_app(self.app_name, self.port, self.chart_path, self.latest_commit_hash, self.no_of_pods.get(),
+                        autoscaling,
+                        self.min_no_of_pods.get(), self.max_no_of_pods.get())
             self.progress_label.config(text="Application successfully deployed...")
             print("Application successfully deployed... \nCheers!!!")
             self.endpoint_display()
         except Exception as e:
             print(e)
 
-
     def endpoint_display(self):
-        self.APP_PORT = self.corev1apiclient.list_namespaced_service(self.app_name,
-                                                           label_selector="app.kubernetes.io/name=" + self.app_name
-                                                           ).items[0].spec.ports[0].node_port
-        self.GRAFANA_PORT = self.corev1apiclient.list_namespaced_service("monitoring",
-                                                               label_selector="app.kubernetes.io/name=grafana"
-                                                               ).items[0].spec.ports[0].node_port
+        self.APP_PORT = \
+            self.corev1apiclient.list_namespaced_service(
+                self.app_name, label_selector="app.kubernetes.io/name=" + self.app_name
+            ).items[0].spec.ports[0].node_port
+        self.GRAFANA_PORT = \
+            self.corev1apiclient.list_namespaced_service(
+                "monitoring", label_selector="app.kubernetes.io/name=grafana"
+            ).items[0].spec.ports[0].node_port
         self.PROMETHEUS_PORT = self.corev1apiclient.list_namespaced_service("monitoring",
                                                                   label_selector="app=prometheus-operator-prometheus"
                                                                   ).items[0].spec.ports[0].node_port
-        self.KUBERNETES_DASHBOARD_PORT = self.corev1apiclient.list_namespaced_service("kubernetes-dashboard",
-                                                                            label_selector="k8s-app=kubernetes-dashboard"
-                                                                            ).items[0].spec.ports[0].node_port
+        self.KUBERNETES_DASHBOARD_PORT = \
+            self.corev1apiclient.list_namespaced_service(
+                "kubernetes-dashboard", label_selector="k8s-app=kubernetes-dashboard"
+            ).items[0].spec.ports[0].node_port
         self.NODE = self.corev1apiclient.list_node().items[0].status.addresses[0].address
 
-        self.message = "Access your app at:\n http://" + self.NODE + ":" + str(self.APP_PORT) +\
-                  "\nMonitor your app at: \n  GRAFANA:\n   http://" + self.NODE + ":" + \
-                  str(self.GRAFANA_PORT) + "\n  K8s DASHBOARD:\n   http://" + self.NODE + ":" + str(self.KUBERNETES_DASHBOARD_PORT)
+        self.message = "Access your app at:\n http://" + self.NODE + ":" + str(self.APP_PORT) \
+                       + "\nMonitor your app at: \n  GRAFANA:\n   http://" + self.NODE + ":" \
+                       + str(self.GRAFANA_PORT) + "\n  K8s DASHBOARD:\n   http://" + self.NODE + ":"\
+                       + str(self.KUBERNETES_DASHBOARD_PORT)
 
         # print("\n\n\tAccess your app at: http://{0}:{1}\n\n\tMonitor your app at:\n\n"
         #       "\t\tGRAFANA: http://{0}:{2}\n"
         #       "\t\tK8s DASHBOARD: http://{0}:{3}\n"
         #       "\n\n".format(self.NODE, self.APP_PORT, self.GRAFANA_PORT, self.KUBERNETES_DASHBOARD_PORT))
-        messagebox.showinfo(title='Endpoints', message=self.message)
-
+        messagebox.showinfo(title='Endpoints', message=self.message, icon='info')
 
     def cleanup_validation_labels(self):
         self.invalid_url.grid_remove()
@@ -353,8 +353,8 @@ class Kuber:
         self.t.pack_forget()
         self.progress_label.grid_forget()
         self.master.geometry('320x510+50+100')
-        self.validate_button.config(text = "Validate", command = self.validate)
-        self.clear_button.config(text = "Clear", command = self.clear)
+        self.validate_button.config(text="Validate", command=self.validate)
+        self.clear_button.config(text="Clear", command=self.clear)
         self.git_url_entry.state(['!disabled'])
         self.docker_hub_user_entry.state(['!disabled'])
         self.docker_hub_password_entry.state(['!disabled'])
@@ -365,8 +365,6 @@ class Kuber:
         self.enable_autoscaling_n_radiobutton.configure(state=NORMAL)
         self.enable_autoscaling_y_radiobutton.configure(state=NORMAL)
         self.context_combobox.configure(state=NORMAL)
-
-
 
 
 def main():
