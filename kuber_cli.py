@@ -66,7 +66,7 @@ def main():
                        "\nWhat you wish to do?[C[Cleanup app] / D[Deploy] / E[Display endpoint and exit]]: ").lower()
         if deploy == "d":
             print("Deploying latest application version...")  # deploy(app_name)
-            updrade_app(app_name, port, chart_path, latest_commit_hash)
+            updrade_app(app_name, port, chart_path, latest_commit_hash, 1, "false", 1, 3)
             endpoint_display()
         elif deploy == "e":
             endpoint_display()
@@ -81,7 +81,7 @@ def main():
         try:
             print("Creating namesapace...")
             corev1apiclient.create_namespace(v1namespaceclient)
-            install_app(app_name, port, chart_path, latest_commit_hash)
+            install_app(app_name, port, chart_path, latest_commit_hash, 1, "false", 1, 3)
             endpoint_display()
         except Exception as e:
             print(e)

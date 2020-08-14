@@ -273,7 +273,12 @@ class Kuber:
             try:
                 print("Creating namesapace...")
                 self.corev1apiclient.create_namespace(self.v1namespaceclient)
-                install_app(self.app_name, self.port, self.chart_path, self.latest_commit_hash)
+                if self.enable_autoscaling.get() == "N":
+                    autoscaling = "false"
+                else:
+                    autoscaling = "true"
+                install_app(self.app_name, self.port, self.chart_path, self.latest_commit_hash, self.no_of_pods.get(), autoscaling,
+                            self.min_no_of_pods.get(), self.max_no_of_pods.get())
                 self.endpoint_display()
                 print("Application successfully Onboarded... Cheers!!!")
             except Exception as e:
@@ -283,7 +288,12 @@ class Kuber:
         try:
             # self.validate_button.state(["disabled"])
             self.validate_button.config(text = "Reset", command = self.reset)
-            updrade_app(self.app_name, self.port, self.chart_path, self.latest_commit_hash)
+            if self.enable_autoscaling.get() == "N":
+                autoscaling = "false"
+            else:
+                autoscaling = "true"
+            updrade_app(self.app_name, self.port, self.chart_path, self.latest_commit_hash, self.no_of_pods.get(), autoscaling,
+                            self.min_no_of_pods.get(), self.max_no_of_pods.get())
             self.progress_label.config(text="Application successfully deployed...")
             print("Application successfully deployed... Cheers!!!")
             self.endpoint_display()
