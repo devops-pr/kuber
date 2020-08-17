@@ -352,7 +352,7 @@ class Kuber:
     def reset(self):
         self.t.pack_forget()
         self.progress_label.grid_forget()
-        self.master.geometry('320x510+50+100')
+        self.master.geometry('320x510+750+100')
         self.validate_button.config(text="Validate", command=self.validate)
         self.clear_button.config(text="Clear", command=self.clear)
         self.git_url_entry.state(['!disabled'])
